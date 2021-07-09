@@ -25,9 +25,9 @@ public class OrderController {
         return orderService.listOrders();
     }
 
-    @GetMapping("/{id}")
-    public OrderDTO getOrderById(@PathVariable("id") Long id) {
-        return orderService.getOrderById(id);
+    @GetMapping("/{month}")
+    public OrderDTO getOrdersByMonth(@PathVariable("month") int month) {
+        return orderService.getOrdersByMonth(month);
     }
 
     @PostMapping
@@ -52,7 +52,7 @@ public class OrderController {
         orderService.deleteOrders();
     }
 
-    @ExceptionHandler(IllegalStateException.class)
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Problem> handleNotFound(IllegalArgumentException iae) {
         Problem problem =
@@ -64,7 +64,7 @@ public class OrderController {
                 .body(problem);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Problem> invalidParameters(IllegalStateException ise) {
         Problem problem =

@@ -27,16 +27,16 @@ public class OrderService {
     public List<OrderDTO> listOrders() {
         Type targetListType = new TypeToken<List<OrderDTO>>(){}.getType();
 
-        List<Order> filteredOrders = orders.stream().filter(o -> o.getOrderDate().getMonthValue() == LocalDate.now().getMonthValue())
-                .collect(Collectors.toList());
-
-        return modelMapper.map(filteredOrders, targetListType);
+        return modelMapper.map(orders, targetListType);
     }
 
-    public OrderDTO getOrderById(Long id) {
-        return modelMapper.map(orders.stream().filter(o -> o.getId() == id).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Order not found by id: " + id))
-                , OrderDTO.class);
+    public OrderDTO getOrdersByMonth(int month) {
+        Type targetListType = new TypeToken<List<OrderDTO>>(){}.getType();
+
+        List<Order> filteredOrders = orders.stream()
+                .filter(o-> o.getOrderDate().getMonthValue() == month).collect(Collectors.toList());
+
+        return modelMapper.map(filteredOrders, targetListType);
     }
 
     public OrderDTO createOrder(CreateOrderCommand command) {
@@ -58,13 +58,13 @@ public class OrderService {
 
         Order order = orders.stream().filter(o-> o.getId() == id).findFirst().orElseThrow(() -> new IllegalArgumentException("Order not Found: " + id));
 
-                if (command.getPrice() < 0) {
+                if (command.getShippingPrice() < 0) {
                     throw new IllegalStateException();
                 }
 
-                if (order.getShippingDate() != null) {
+                if (order.getShippingDate() == null) {
                     order.setShippingDate(LocalDate.now());
-                    order.setShippingPrice(command.getPrice());
+                    order.setShippingPrice(command.getShippingPrice());
                 }
 
                 return modelMapper.map(order, OrderDTO.class);
@@ -79,4 +79,5 @@ public class OrderService {
     public void deleteOrders() {
         orders.clear();
     }
+
 }
