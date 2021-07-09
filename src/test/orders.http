@@ -1,0 +1,14 @@
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "productNumber": "CK8987L"
+}
+
+###
+PUT http://localhost:8080/api/orders/1/shipping
+Content-Type: application/json
+
+{
+ "shippingPrice": 2000
+}
